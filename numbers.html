@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Number Sequence Game</title>
+
+<!-- Google Kid-Friendly Font -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: url('safari.png') no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  h1 {
+    margin-top: 20px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 40px;
+    color: #264d00; /* fun green */
+    text-shadow: 3px 3px 0 #39e600; /* playful shadow */
+    letter-spacing: 2px;
+  }
+
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(10, 60px);
+    justify-content: center;
+    gap: 8px;
+    margin: 20px auto;
+  }
+
+  .circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    user-select: none;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 20px;
+    transition: transform 0.2s;
+  }
+
+  .circle:hover {
+    transform: scale(1.1);
+  }
+
+  .correct {
+    background: green;
+    color: white;
+    cursor: default;
+  }
+
+  .wrong {
+    background: red;
+    color: white;
+  }
+
+  #shuffleBtn {
+    margin: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-family: 'Fredoka', sans-serif;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  #shuffleBtn:hover {
+    transform: scale(1.1);
+    background: #ffb74d;
+  }
+
+  /* POPUP */
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .popup-content {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .popup-content button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Click Numbers 1 → 100 in Order</h1>
+
+<div id="grid"></div>
+<button id="shuffleBtn">🔄 Shuffle Numbers</button>
+
+<!-- POPUP -->
+<div id="popup" class="popup hidden">
+  <div class="popup-content">
+    <p>That's incorrect</p>
+    <button id="nextBtn">Next</button>
+  </div>
+</div>
+
+<script>
+  const grid = document.getElementById("grid");
+  const popup = document.getElementById("popup");
+  const nextBtn = document.getElementById("nextBtn");
+  const shuffleBtn = document.getElementById("shuffleBtn");
+
+  let numbers = [];
+  for (let i = 1; i <= 100; i++) numbers.push(i);
+
+  let current = 1;
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  function createGrid() {
+    grid.innerHTML = "";
+    current = 1;
+    shuffleArray(numbers);
+
+    numbers.forEach(num => {
+      const div = document.createElement("div");
+      div.className = "circle";
+      div.textContent = num;
+
+      div.onclick = function () {
+        if (div.classList.contains("correct")) return;
+
+        if (num === current) {
+          div.classList.add("correct");
+          current++;
+
+          if (current > 100) {
+            alert("🎉 You completed the game!");
+          }
+        } else {
+          div.classList.add("wrong");
+          popup.classList.remove("hidden");
+
+          setTimeout(() => {
+            div.classList.remove("wrong");
+          }, 300);
+        }
+      };
+
+      grid.appendChild(div);
+    });
+  }
+
+  // Initialize first grid
+  createGrid();
+
+  // NEXT BUTTON closes popup
+  nextBtn.onclick = function () {
+    popup.classList.add("hidden");
+  };
+
+  // SHUFFLE BUTTON creates a new round
+  shuffleBtn.onclick = function () {
+    createGrid();
+  };
+</script>
+
+</body>
+</html>
